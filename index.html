@@ -9,62 +9,55 @@
 
 <body class="bg-black text-sky-300 p-6">
 
-  <!-- TOP HORIZONTAL CARD -->
-  <div class="bg-gray-900 border border-sky-400 rounded-2xl shadow-xl p-4 mb-6">
+  <!-- GRID LAYOUT -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-      <!-- WEATHER -->
-      <div>
-        <h2 class="text-lg font-semibold mb-1">Weather</h2>
-        <div id="weather" class="text-sky-200">
-          Loading weather...
-        </div>
+    <!-- WEATHER CARD -->
+    <div class="bg-gray-900 p-4 rounded-2xl shadow-xl aspect-square">
+      <h2 class="text-xl font-semibold mb-2 text-sky-300">Weather</h2>
+      <div id="weather" class="text-sky-200">
+        Loading weather...
       </div>
-
-      <!-- CLOCK -->
-      <div class="text-center">
-        <h2 class="text-lg font-semibold mb-1">Date & Time</h2>
-        <div id="clock" class="text-2xl font-light"></div>
-      </div>
-
-      <!-- NEWS -->
-      <div>
-        <h2 class="text-lg font-semibold mb-1">Latest News</h2>
-        <ul id="news" class="text-sky-200 space-y-1 text-sm">
-          <li>News will appear here when API key added.</li>
-        </ul>
-      </div>
-
     </div>
+
+    <!-- CLOCK -->
+    <div class="bg-gray-900 p-4 rounded-2xl shadow-xl text-center aspect-square">
+      <h2 class="text-xl font-semibold mb-2 text-sky-300">Date & Time</h2>
+      <div id="clock" class="text-3xl font-light"></div>
+    </div>
+
+    <!-- NEWS -->
+    <div class="bg-gray-900 p-4 rounded-2xl shadow-xl aspect-square overflow-auto">
+      <h2 class="text-xl font-semibold mb-2 text-sky-300">Latest News</h2>
+      <ul id="news" class="space-y-2 text-sky-200">
+        <li>News will appear here once you add your API key.</li>
+      </ul>
+    </div>
+
   </div>
 
+  <!-- ADSB EXCHANGE RADAR -->
+  <div class="mt-6 bg-gray-900 p-4 rounded-2xl shadow-xl">
+    <h2 class="text-xl font-semibold mb-4 text-sky-300">ADSB Exchange Radar</h2>
+    <iframe 
+      src="https://globe.adsbexchange.com" 
+      class="w-full h-[500px] rounded-xl border-0">
+    </iframe>
+  </div>
 
-  <!-- BOTTOM SECTION (SIDE-BY-SIDE) -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-    <!-- ADSB CARD -->
-    <div class="bg-gray-900 border border-sky-400 rounded-2xl shadow-xl p-4">
-      <h2 class="text-xl font-semibold mb-3">ADSB Exchange Radar</h2>
-      <iframe 
-        src="https://globe.adsbexchange.com" 
-        class="w-full h-[450px] rounded-xl border-0">
-      </iframe>
+  <!-- SCHOOLGY -->
+  <div class="mt-6 bg-gray-900 p-4 rounded-2xl shadow-xl">
+    <h2 class="text-xl font-semibold mb-4 text-sky-300">My Schoology Grades</h2>
+    <div class="text-sky-200">
+      <p>Connect Schoology API here.</p>
+      <p class="text-sm text-sky-500">I can generate the code for this once you have an API key.</p>
     </div>
-
-    <!-- GRADES CARD -->
-    <div class="bg-gray-900 border border-sky-400 rounded-2xl shadow-xl p-4">
-      <h2 class="text-xl font-semibold mb-3">My Schoology Grades</h2>
-      <p class="text-sky-200">Connect Schoology API here.</p>
-      <p class="text-sm text-sky-500">I can generate the API integration when you get a key.</p>
-    </div>
-
   </div>
 
 
   <!-- JAVASCRIPT -->
   <script>
-    // CLOCK
+    // --- CLOCK ---
     function updateClock() {
       const now = new Date();
       document.getElementById("clock").textContent = now.toLocaleString();
@@ -72,7 +65,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // WEATHER (OPEN-METEO)
+    // --- WEATHER (OPEN-METEO) ---
     fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current=temperature_2m,weathercode")
       .then(res => res.json())
       .then(data => {
@@ -80,15 +73,15 @@
         const code = data.current.weathercode;
 
         document.getElementById("weather").innerHTML = `
-          <div class="text-3xl font-light text-sky-300">${temp}°F</div>
-          <div class="text-sky-500 text-sm">Weather code: ${code}</div>
+          <div class="text-4xl font-light text-sky-300">${temp}°F</div>
+          <div class="mt-1 text-sky-500">Weather code: ${code}</div>
         `;
       })
       .catch(() => {
         document.getElementById("weather").textContent = "Unable to load weather.";
       });
 
-    // NEWS (NEWSAPI)
+    // --- NEWS (NEWSAPI) ---
     const NEWS_API_KEY = "YOUR_KEY_HERE";
 
     if (NEWS_API_KEY !== "YOUR_KEY_HERE") {
@@ -108,44 +101,7 @@
           document.getElementById("news").innerHTML = "<li>Unable to load news.</li>";
         });
     }
-  <script>
-function loadNews() {
-  const rssUrl = "https://www.reuters.com/rssFeed/worldNews";
-  const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
-
-  fetch(apiUrl)
-    .then(response => response.json())
-    .then(data => {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(data.contents, "text/xml");
-      const items = xml.querySelectorAll("item");
-
-      const list = document.getElementById("news-list");
-      list.innerHTML = ""; // clear existing items
-
-      for (let i = 0; i < 5; i++) {
-        const item = items[i];
-        const title = item.querySelector("title").textContent;
-        const link = item.querySelector("link").textContent;
-
-        const li = document.createElement("li");
-        li.innerHTML = `<a href="${link}" target="_blank">${title}</a>`;
-        list.appendChild(li);
-      }
-    })
-    .catch(() => {
-      document.getElementById("news-list").innerHTML =
-        "<li>Failed to load news.</li>";
-    });
-}
-
-// Load immediately
-loadNews();
-
-// Refresh every 1 minute (60,000 ms)
-setInterval(loadNews, 60000);
-</script>
-
+  </script>
 
 </body>
 </html>
