@@ -108,7 +108,43 @@
           document.getElementById("news").innerHTML = "<li>Unable to load news.</li>";
         });
     }
-  </script>
+  <script>
+function loadNews() {
+  const rssUrl = "https://www.reuters.com/rssFeed/worldNews";
+  const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(data.contents, "text/xml");
+      const items = xml.querySelectorAll("item");
+
+      const list = document.getElementById("news-list");
+      list.innerHTML = ""; // clear existing items
+
+      for (let i = 0; i < 5; i++) {
+        const item = items[i];
+        const title = item.querySelector("title").textContent;
+        const link = item.querySelector("link").textContent;
+
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="${link}" target="_blank">${title}</a>`;
+        list.appendChild(li);
+      }
+    })
+    .catch(() => {
+      document.getElementById("news-list").innerHTML =
+        "<li>Failed to load news.</li>";
+    });
+}
+
+// Load immediately
+loadNews();
+
+// Refresh every 1 minute (60,000 ms)
+setInterval(loadNews, 60000);
+</script>
 
 </body>
 </html>
