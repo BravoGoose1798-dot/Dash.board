@@ -88,4 +88,27 @@
         document.getElementById("weather").textContent = "Unable to load weather.";
       });
 
-    // NEWS
+    // NEWS (NEWSAPI)
+    const NEWS_API_KEY = "YOUR_KEY_HERE";
+
+    if (NEWS_API_KEY !== "YOUR_KEY_HERE") {
+      fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${NEWS_API_KEY}`)
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById("news");
+          list.innerHTML = "";
+
+          data.articles.slice(0, 5).forEach(article => {
+            const li = document.createElement("li");
+            li.innerHTML = `<a href="${article.url}" target="_blank" class="hover:underline">${article.title}</a>`;
+            list.appendChild(li);
+          });
+        })
+        .catch(() => {
+          document.getElementById("news").innerHTML = "<li>Unable to load news.</li>";
+        });
+    }
+  </script>
+
+</body>
+</html>
