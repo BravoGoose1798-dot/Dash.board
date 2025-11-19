@@ -16,6 +16,11 @@
     * {
       font-family: 'Orbitron', sans-serif !important;
     }
+
+    /* Optional subtle neon glow */
+    .neon-blue {
+      text-shadow: 0 0 8px rgba(0, 180, 255, 0.8), 0 0 16px rgba(0, 180, 255, 0.6);
+    }
   </style>
 </head>
 
@@ -28,23 +33,23 @@
 
       <!-- WEATHER -->
       <div>
-        <h2 class="text-lg font-semibold mb-1">Weather</h2>
-        <div id="weather" class="text-blue-300">
+        <h2 class="text-lg font-semibold mb-1 neon-blue">Weather</h2>
+        <div id="weather" class="text-blue-300 neon-blue">
           Loading weather...
         </div>
       </div>
 
       <!-- CLOCK -->
       <div class="text-center">
-        <h2 class="text-lg font-semibold mb-1">Date & Time</h2>
-        <div id="clock" class="text-2xl font-light"></div>
+        <h2 class="text-lg font-semibold mb-1 neon-blue">Date & Time</h2>
+        <div id="clock" class="text-2xl font-light neon-blue"></div>
       </div>
 
       <!-- NEWS -->
       <div>
-        <h2 class="text-lg font-semibold mb-1">Latest News</h2>
+        <h2 class="text-lg font-semibold mb-1 neon-blue">Latest News</h2>
         <ul id="news" class="text-blue-300 space-y-1 text-sm">
-          <li>News will appear here...</li>
+          <li class="neon-blue">News will appear here...</li>
         </ul>
       </div>
 
@@ -56,7 +61,7 @@
 
     <!-- ADSB CARD -->
     <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4">
-      <h2 class="text-xl font-semibold mb-3">ADSB Exchange Radar</h2>
+      <h2 class="text-xl font-semibold mb-3 neon-blue">ADSB Exchange Radar</h2>
       <iframe 
         src="https://globe.adsbexchange.com" 
         class="w-full h-[450px] border-0">
@@ -65,9 +70,9 @@
 
     <!-- SECOND NEWS CARD -->
     <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4">
-      <h2 class="text-xl font-semibold mb-3">More News</h2>
+      <h2 class="text-xl font-semibold mb-3 neon-blue">More News</h2>
       <ul id="news2" class="text-blue-300 space-y-2 text-sm">
-        <li>Loading more news...</li>
+        <li class="neon-blue">Loading more news...</li>
       </ul>
     </div>
 
@@ -83,7 +88,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // WEATHER – °F conversion
+    // WEATHER – Fahrenheit fix
     fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current_weather=true")
       .then(res => res.json())
       .then(data => {
@@ -91,18 +96,18 @@
         const tempF = (celsius * 9/5 + 32).toFixed(1);
 
         document.getElementById("weather").innerHTML = `
-          <div class="text-3xl font-light text-blue-300">${tempF}°F</div>
-          <div class="text-blue-400 text-sm">Weather code: ${data.current_weather.weathercode}</div>
+          <div class="text-3xl font-light text-blue-300 neon-blue">${tempF}°F</div>
+          <div class="text-blue-400 text-sm neon-blue">Weather code: ${data.current_weather.weathercode}</div>
         `;
       })
       .catch(() => {
         document.getElementById("weather").textContent = "Unable to load weather.";
       });
 
-    // NEWS CARD 1 – Reuters
+    // NEWS CARD 1 (Reuters)
     function loadNews() {
       const rssUrl = "https://www.reuters.com/rssFeed/worldNews";
-      const apiUrl = \`https://api.allorigins.win/get?url=\${encodeURIComponent(rssUrl)}\`;
+      const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
 
       fetch(apiUrl)
         .then(response => response.json())
@@ -120,21 +125,22 @@
             const link = item.querySelector("link").textContent;
 
             const li = document.createElement("li");
-            li.innerHTML = \`<a href="\${link}" target="_blank" class="hover:underline">\${title}</a>\`;
+            li.innerHTML = `<a href="${link}" target="_blank" class="hover:underline neon-blue">${title}</a>`;
             list.appendChild(li);
           }
         })
         .catch(() => {
-          document.getElementById("news").innerHTML = "<li>Failed to load news.</li>";
+          document.getElementById("news").innerHTML =
+            "<li class='neon-blue'>Failed to load news.</li>";
         });
     }
     loadNews();
     setInterval(loadNews, 60000);
 
-    // NEWS CARD 2 – NPR
+    // NEWS CARD 2 (NPR)
     function loadNews2() {
       const rssUrl = "https://feeds.npr.org/1001/rss.xml";
-      const apiUrl = \`https://api.allorigins.win/get?url=\${encodeURIComponent(rssUrl)}\`;
+      const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
 
       fetch(apiUrl)
         .then(response => response.json())
@@ -152,17 +158,17 @@
             const link = item.querySelector("link").textContent;
 
             const li = document.createElement("li");
-            li.innerHTML = \`<a href="\${link}" target="_blank" class="hover:underline">\${title}</a>\`;
+            li.innerHTML = `<a href="${link}" target="_blank" class="hover:underline neon-blue">${title}</a>`;
             list.appendChild(li);
           }
         })
         .catch(() => {
-          document.getElementById("news2").innerHTML = "<li>Failed to load news.</li>";
+          document.getElementById("news2").innerHTML =
+            "<li class='neon-blue'>Failed to load news.</li>";
         });
     }
     loadNews2();
     setInterval(loadNews2, 60000);
-
   </script>
 
 </body>
