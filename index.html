@@ -74,21 +74,22 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // WEATHER (OPEN-METEO)
-    fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current=temperature_2m,weathercode")
-      .then(res => res.json())
-      .then(data => {
-        const temp = data.current.temperature_2m;
-        const code = data.current.weathercode;
+    // WEATHER (OPEN-METEO) - corrected to Fahrenheit
+fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current_weather=true")
+  .then(res => res.json())
+  .then(data => {
+    const celsius = data.current_weather.temperature;
+    const tempF = (celsius * 9/5 + 32).toFixed(1); // convert to Fahrenheit
 
-        document.getElementById("weather").innerHTML = `
-          <div class="text-3xl font-light text-sky-300">${temp}°F</div>
-          <div class="text-sky-500 text-sm">Weather code: ${code}</div>
-        `;
-      })
-      .catch(() => {
-        document.getElementById("weather").textContent = "Unable to load weather.";
-      });
+    document.getElementById("weather").innerHTML = `
+      <div class="text-3xl font-light text-sky-300">${tempF}°F</div>
+      <div class="text-sky-500 text-sm">Weather code: ${data.current_weather.weathercode}</div>
+    `;
+  })
+  .catch(() => {
+    document.getElementById("weather").textContent = "Unable to load weather.";
+  });
+
 
     // SECOND NEWS CARD (Top US Headlines RSS)
 function loadNews2() {
