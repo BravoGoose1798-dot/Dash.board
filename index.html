@@ -90,26 +90,42 @@
         document.getElementById("weather").textContent = "Unable to load weather.";
       });
 
-    // NEWS (NEWSAPI)
-    const NEWS_API_KEY = "YOUR_KEY_HERE";
+    // SECOND NEWS CARD (Top US Headlines RSS)
+function loadNews2() {
+  const rssUrl = "https://feeds.npr.org/1001/rss.xml"; // NPR Top News
+  const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
 
-    if (NEWS_API_KEY !== "YOUR_KEY_HERE") {
-      fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${NEWS_API_KEY}`)
-        .then(res => res.json())
-        .then(data => {
-          const list = document.getElementById("news");
-          list.innerHTML = "";
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(data.contents, "text/xml");
+      const items = xml.querySelectorAll("item");
 
-          data.articles.slice(0, 5).forEach(article => {
-            const li = document.createElement("li");
-            li.innerHTML = `<a href="${article.url}" target="_blank" class="hover:underline">${article.title}</a>`;
-            list.appendChild(li);
-          });
-        })
-        .catch(() => {
-          document.getElementById("news").innerHTML = "<li>Unable to load news.</li>";
-        });
-    }
+      const list = document.getElementById("news2");
+      list.innerHTML = "";
+
+      // Top 5 NPR headlines
+      for (let i = 0; i < 5; i++) {
+        const item = items[i];
+        const title = item.querySelector("title").textContent;
+        const link = item.querySelector("link").textContent;
+
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="${link}" target="_blank" class="hover:underline">${title}</a>`;
+        list.appendChild(li);
+      }
+    })
+    .catch(() => {
+      document.getElementById("news2").innerHTML =
+        "<li>Failed to load news.</li>";
+    });
+}
+
+// Load immediately + refresh every 1 minute
+loadNews2();
+setInterval(loadNews2, 60000);
+
   </script>
 
 </body>
