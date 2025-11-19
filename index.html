@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-  
 <head>
   <meta charset="UTF-8" />
   <title>My Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- ModeNine font -->
-  <link href="https://fonts.googleapis.com/css2?family=ModeNine&display=swap" rel="stylesheet">
+  <!-- ORBITRON FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Apply font globally -->
   <style>
-    body, * {
-      font-family: 'ModeNine', sans-serif !important;
+    * {
+      font-family: 'Orbitron', sans-serif !important;
     }
   </style>
 </head>
@@ -52,7 +51,7 @@
     </div>
   </div>
 
-  <!-- BOTTOM SECTION (SIDE-BY-SIDE) -->
+  <!-- BOTTOM SECTION -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
     <!-- ADSB CARD -->
@@ -84,7 +83,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // WEATHER (OPEN-METEO) - Fahrenheit conversion
+    // WEATHER – Fahrenheit fix
     fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current_weather=true")
       .then(res => res.json())
       .then(data => {
@@ -100,7 +99,7 @@
         document.getElementById("weather").textContent = "Unable to load weather.";
       });
 
-    // NEWS CARD 1 (Top Reuters)
+    // NEWS CARD 1 (Reuters)
     function loadNews() {
       const rssUrl = "https://www.reuters.com/rssFeed/worldNews";
       const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
@@ -133,7 +132,7 @@
     loadNews();
     setInterval(loadNews, 60000);
 
-    // NEWS CARD 2 (Top NPR)
+    // NEWS CARD 2 (NPR)
     function loadNews2() {
       const rssUrl = "https://feeds.npr.org/1001/rss.xml";
       const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
