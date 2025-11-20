@@ -11,15 +11,20 @@
   <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Apply font globally -->
+  <!-- GLOBAL STYLES -->
   <style>
     * {
       font-family: 'Orbitron', sans-serif !important;
     }
 
-    /* Optional subtle neon glow */
+    /* Neon glow */
     .neon-blue {
       text-shadow: 0 0 8px rgba(0, 180, 255, 0.8), 0 0 16px rgba(0, 180, 255, 0.6);
+    }
+
+    /* Remove all rounded corners globally */
+    .no-round {
+      border-radius: 0 !important;
     }
   </style>
 </head>
@@ -27,7 +32,7 @@
 <body class="bg-black text-blue-300 p-6">
 
   <!-- TOP HORIZONTAL CARD -->
-  <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4 mb-6">
+  <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4 mb-6 no-round">
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
@@ -60,16 +65,16 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
     <!-- ADSB CARD -->
-    <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4">
+    <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4 no-round">
       <h2 class="text-xl font-semibold mb-3 neon-blue">ADSB Exchange Radar</h2>
       <iframe 
         src="https://globe.adsbexchange.com" 
-        class="w-full h-[450px] border-0">
+        class="w-full h-[450px] border-0 no-round">
       </iframe>
     </div>
 
     <!-- SECOND NEWS CARD -->
-    <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4">
+    <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4 no-round">
       <h2 class="text-xl font-semibold mb-3 neon-blue">More News</h2>
       <ul id="news2" class="text-blue-300 space-y-2 text-sm">
         <li class="neon-blue">Loading more news...</li>
@@ -89,38 +94,24 @@
     updateClock();
 
     // WEATHER – updates every 5 minutes
-function loadWeather() {
-  fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current_weather=true")
-    .then(res => res.json())
-    .then(data => {
-      const celsius = data.current_weather.temperature;
-      const tempF = (celsius * 9/5 + 32).toFixed(1);
+    function loadWeather() {
+      fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current_weather=true")
+        .then(res => res.json())
+        .then(data => {
+          const celsius = data.current_weather.temperature;
+          const tempF = (celsius * 9/5 + 32).toFixed(1);
 
-      document.getElementById("weather").innerHTML = `
-        <div class="text-3xl font-light text-blue-300 neon-blue">${tempF}°F</div>
-        <div class="text-blue-400 text-sm neon-blue">Weather code: ${data.current_weather.weathercode}</div>
-      `;
-    })
-    .catch(() => {
-      document.getElementById("weather").textContent = "Unable to load weather.";
-    });
-}
-
-loadWeather();                     // runs immediately on page load
-setInterval(loadWeather, 300000);  // refresh weather every 5 minutes
-
-      .then(data => {
-        const celsius = data.current_weather.temperature;
-        const tempF = (celsius * 9/5 + 32).toFixed(1);
-
-        document.getElementById("weather").innerHTML = `
-          <div class="text-3xl font-light text-blue-300 neon-blue">${tempF}°F</div>
-          <div class="text-blue-400 text-sm neon-blue">Weather code: ${data.current_weather.weathercode}</div>
-        `;
-      })
-      .catch(() => {
-        document.getElementById("weather").textContent = "Unable to load weather.";
-      });
+          document.getElementById("weather").innerHTML = `
+            <div class="text-3xl font-light text-blue-300 neon-blue">${tempF}°F</div>
+            <div class="text-blue-400 text-sm neon-blue">Weather code: ${data.current_weather.weathercode}</div>
+          `;
+        })
+        .catch(() => {
+          document.getElementById("weather").textContent = "Unable to load weather.";
+        });
+    }
+    loadWeather();
+    setInterval(loadWeather, 300000); // 5 min refresh
 
     // NEWS CARD 1 (Reuters)
     function loadNews() {
@@ -153,7 +144,7 @@ setInterval(loadWeather, 300000);  // refresh weather every 5 minutes
         });
     }
     loadNews();
-    setInterval(loadNews, 60000);
+    setInterval(loadNews, 60000); // 1 minute
 
     // NEWS CARD 2 (NPR)
     function loadNews2() {
@@ -186,7 +177,7 @@ setInterval(loadWeather, 300000);  // refresh weather every 5 minutes
         });
     }
     loadNews2();
-    setInterval(loadNews2, 60000);
+    setInterval(loadNews2, 60000); // 1 minute
   </script>
 
 </body>
