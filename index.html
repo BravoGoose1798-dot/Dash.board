@@ -88,9 +88,27 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // WEATHER – Fahrenheit fix
-    fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current_weather=true")
-      .then(res => res.json())
+    // WEATHER – updates every 5 minutes
+function loadWeather() {
+  fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current_weather=true")
+    .then(res => res.json())
+    .then(data => {
+      const celsius = data.current_weather.temperature;
+      const tempF = (celsius * 9/5 + 32).toFixed(1);
+
+      document.getElementById("weather").innerHTML = `
+        <div class="text-3xl font-light text-blue-300 neon-blue">${tempF}°F</div>
+        <div class="text-blue-400 text-sm neon-blue">Weather code: ${data.current_weather.weathercode}</div>
+      `;
+    })
+    .catch(() => {
+      document.getElementById("weather").textContent = "Unable to load weather.";
+    });
+}
+
+loadWeather();                     // runs immediately on page load
+setInterval(loadWeather, 300000);  // refresh weather every 5 minutes
+
       .then(data => {
         const celsius = data.current_weather.temperature;
         const tempF = (celsius * 9/5 + 32).toFixed(1);
