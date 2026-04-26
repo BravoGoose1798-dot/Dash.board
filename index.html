@@ -31,112 +31,31 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
+  transition:all .25s ease;
 }
 
-/* THEMES */
+/* ================= THEMES ================= */
+
 body.dark{--glow:0 0 12px var(--accent);}
-body.light{--bg:#f5f7ff;--fg:#111;--accent:#ff4d4d;}
-body.min-dark{--bg:#111;--fg:#ddd;--accent:#aaa;}
-body.min-light{--bg:#fafafa;--fg:#111;--accent:#444;}
-body.aesthetic{--bg:linear-gradient(135deg,#1a002b,#002b36);--accent:#ff7bf7;font-family:"Rajdhani";}
+body.light{--bg:#f5f7ff;--fg:#111;--accent:#ff4d4d;--ring:#cfd6ff;}
+body.min-dark{--bg:#111;--fg:#ddd;--accent:#aaa;--ring:#333;}
+body.min-light{--bg:#fafafa;--fg:#000;--accent:#000;--ring:#00000033;}
+body.aesthetic{--bg:linear-gradient(135deg,#1a002b,#002b36);--accent:#ff7bf7;--fg:#fff;font-family:"Rajdhani";}
 body.hacker{--bg:#000;--fg:#00ff66;--accent:#00ff66;font-family:"Share Tech Mono";}
-body.scifi{--bg:#050816;--accent:#4df;font-family:"Orbitron";}
-body.synthwave{--bg:#0a0014;--accent:#ff3df2;font-family:"Orbitron";}
+body.scifi{--bg:#050816;--accent:#4df;--fg:#d6f3ff;font-family:"Orbitron";}
+body.synthwave{--bg:#0a0014;--accent:#ff3df2;--fg:#ffd6ff;font-family:"Orbitron";}
 
-/* LAYOUT */
-.wrapper{
-  display:flex;
-  flex-direction:row;
-  align-items:center;
-  justify-content:center;
-  gap:60px;
-  width:100%;
-  height:100%;
-  padding:10px;
-}
+/* ================= SETTINGS ================= */
 
-/* ✅ FIXED: REAL VISUAL TOGGLE */
-body.portrait{
-  flex-direction:column;
-}
-
-body.portrait .wrapper{
-  flex-direction:column;
-  gap:28px;
-}
-
-body.portrait .ring{
-  width:300px;
-  height:300px;
-}
-
-body.portrait .prep-ring{
-  width:220px;
-  height:220px;
-}
-
-/* RINGS */
-.ring{
-  width:280px;
-  height:280px;
-  position:relative;
-  cursor:pointer;
-}
-
-.prep-ring{
-  width:200px;
-  height:200px;
-  position:relative;
-  cursor:pointer;
-}
-
-svg{transform:rotate(-90deg);}
-circle{fill:none;stroke-width:10;stroke-linecap:round;}
-.bg-ring{stroke:var(--ring);}
-
-.progress,.prep-progress{
-  stroke:var(--accent);
-  filter:drop-shadow(var(--glow));
-}
-
-/* TEXT */
-.time,.prep-time{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  text-align:center;
-
-  width:100%;
-  height:100%;
-
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-
-  line-height:1;
-}
-
-.time{font-size:2.6rem;}
-.prep-time{font-size:1.3rem;}
-
-.small{
-  font-size:1rem;
-  opacity:.85;
-  text-align:center;
-}
-
-/* UI */
 .settings-btn{
   position:absolute;
-  top:18px;
-  right:18px;
+  top:12px;
+  right:12px;
+  z-index:99999;
   background:var(--card);
-  padding:12px;
+  padding:10px;
   border-radius:12px;
   cursor:pointer;
-  z-index:20;
 }
 
 .panel{
@@ -149,36 +68,112 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
   backdrop-filter:blur(10px);
   padding:20px;
   transition:.3s;
-  z-index:9999;
+  z-index:99990;
 }
+
 .panel.open{right:0;}
 
 .overlay{
   position:fixed;
   inset:0;
   display:none;
+  z-index:99980;
 }
 .overlay.show{display:block;}
 
-/* BUTTONS */
+/* ================= LAYOUT ================= */
+
+.wrapper{
+  display:flex;
+  gap:40px;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+  padding:20px;
+}
+
+/* ================= PORTRAIT MODE (FIXED + COMPACT) ================= */
+
+body.portrait .wrapper{
+  flex-direction:column;
+  gap:6px;
+  padding:8px;
+}
+
+body.portrait .ring{
+  width:min(58vw, 220px);
+  height:min(58vw, 220px);
+}
+
+body.portrait .prep-ring{
+  width:min(38vw, 150px);
+  height:min(38vw, 150px);
+}
+
+/* ================= RINGS ================= */
+
+.ring,.prep-ring{
+  position:relative;
+  cursor:pointer;
+}
+
+.ring{width:280px;height:280px;}
+.prep-ring{width:200px;height:200px;}
+
+svg{transform:rotate(-90deg);}
+circle{fill:none;stroke-width:10;stroke-linecap:round;}
+
+.bg-ring{stroke:var(--ring);}
+.progress,.prep-progress{stroke:var(--accent);filter:drop-shadow(var(--glow));}
+
+/* ================= TEXT ================= */
+
+.time,.prep-time{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  width:100%;
+}
+
+.time{font-size:2.4rem;}
+.prep-time{font-size:1.2rem;}
+
+.label{
+  position:absolute;
+  top:28%;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:.9rem;
+  opacity:.85;
+}
+
+/* ================= CONTROLS ================= */
+
+.main-controls{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:10px;
+}
+
 .ctrl-btn{
-  margin:5px;
-  padding:10px 14px;
+  padding:10px 12px;
   border-radius:10px;
   border:1px solid var(--accent);
   background:rgba(255,255,255,0.06);
   color:var(--fg);
   cursor:pointer;
-  font-size:14px;
 }
 
-.main-controls,
-.prep-controls{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:10px;
+/* ================= SWIPE AREA ================= */
+
+.swipe-area{
+  position:absolute;
+  inset:0;
+  z-index:1;
 }
 </style>
 </head>
@@ -192,8 +187,7 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
   <button onclick="closePanel()">✕</button>
 
   <p>Mode</p>
-  <button class="ctrl-btn" onclick="toggleMode()">Timer/Stopwatch</button>
-  <button class="ctrl-btn" onclick="togglePortrait()">Toggle Layout</button>
+  <button class="ctrl-btn" onclick="toggleMode()">Timer / Stopwatch</button>
 
   <p>Themes</p>
   <button class="ctrl-btn" onclick="setTheme('dark')">Dark</button>
@@ -208,124 +202,57 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 
 <div class="wrapper">
 
-  <div>
-    <div class="small">PREP</div>
-    <div class="prep-ring" onclick="handlePrepTap()">
-      <svg width="200" height="200">
-        <circle class="bg-ring" cx="100" cy="100" r="70"></circle>
-        <circle class="prep-progress" cx="100" cy="100" r="70"></circle>
-      </svg>
-      <div class="prep-time" id="prepTime">04:00.00</div>
-    </div>
+  <div class="prep-ring" id="prepRing">
+    <div class="label">PREP</div>
+    <svg viewBox="0 0 200 200">
+      <circle class="bg-ring" cx="100" cy="100" r="70"></circle>
+      <circle class="prep-progress" cx="100" cy="100" r="70"></circle>
+    </svg>
+    <div class="prep-time" id="prepTime">04:00.00</div>
   </div>
 
-  <div>
-    <div class="small" id="speech">Ready</div>
-
-    <div class="ring" onclick="handleMainTap()">
-      <svg width="280" height="280">
-        <circle class="bg-ring" cx="140" cy="140" r="110"></circle>
-        <circle class="progress" cx="140" cy="140" r="110"></circle>
-      </svg>
-      <div class="time" id="time">00:00.00</div>
-    </div>
-
-    <div class="main-controls">
-      <button class="ctrl-btn" onclick="prevSpeech()">◀</button>
-      <button class="ctrl-btn" onclick="nextSpeech()">▶</button>
-      <button class="ctrl-btn" onclick="resetMain()">Reset</button>
-    </div>
+  <div class="ring" id="mainRing">
+    <div class="label" id="speech">Ready</div>
+    <svg viewBox="0 0 280 280">
+      <circle class="bg-ring" cx="140" cy="140" r="110"></circle>
+      <circle class="progress" cx="140" cy="140" r="110"></circle>
+    </svg>
+    <div class="time" id="time">00:00.00</div>
   </div>
 
 </div>
 
 <script>
+/* ================= STATE ================= */
 
-/* EVERYTHING ELSE UNCHANGED ABOVE THIS LINE */
+let i=0,running=false,start=0,elapsed=0,mode="timer";
+let prepRunning=false,prepStart=0,prepElapsed=0;
+let prepDuration=240000;
 
-/* FIXED TOGGLE LAYOUT */
-function togglePortrait(){
-  const isPortrait = document.body.classList.toggle("portrait");
-
-  const btn = document.querySelector(".settings-btn");
-  if(btn){
-    btn.textContent = isPortrait ? "⚙ 📱" : "⚙ 💻";
-  }
-}
-
-/* ---------------- TIMER CORE ---------------- */
+/* ================= SPEECHES ================= */
 
 const speeches=[
- {name:"AC",duration:360},
- {name:"CX",duration:180},
- {name:"NC",duration:420},
- {name:"CX",duration:180},
- {name:"1AR",duration:240},
- {name:"NR",duration:360},
- {name:"2AR",duration:180}
+ {name:"AC (6)",duration:360},
+ {name:"CX (3)",duration:180},
+ {name:"NC (7)",duration:420},
+ {name:"CX (3)",duration:180},
+ {name:"1AR (4)",duration:240},
+ {name:"NR (6)",duration:360},
+ {name:"2AR (3)",duration:180}
 ];
 
-let i=0;
-let running=false;
-let start=0;
-let elapsed=0;
-let mode="timer";
+/* ================= DOM ================= */
 
-let prepRunning=false;
-let prepDuration=240000;
-let prepStart=0;
-let prepElapsed=0;
-
-/* TRIPLE TAP */
-let mainTaps = [];
-let prepTaps = [];
-const TRIPLE_WINDOW = 600;
-
-function registerTap(arr, callback){
-  const now = performance.now();
-  arr.push(now);
-  arr = arr.filter(t => now - t < TRIPLE_WINDOW);
-
-  if(arr.length >= 3){
-    arr.length = 0;
-    callback();
-  }
-
-  return arr;
-}
-
-function handleMainTap(){
-  mainTaps = registerTap(mainTaps, resetMain);
-  toggleMain();
-}
-
-function handlePrepTap(){
-  prepTaps = registerTap(prepTaps, resetPrep);
-  togglePrep();
-}
-
-function resetMain(){
- elapsed=0;
- start=0;
- running=false;
-}
-
-function resetPrep(){
- prepElapsed=0;
- prepStart=0;
- prepRunning=false;
- document.getElementById("prepTime").textContent="04:00.00";
-}
-
-/* CORE */
-const prepCircle=document.querySelector(".prep-progress");
 const mainCircle=document.querySelector(".progress");
+const prepCircle=document.querySelector(".prep-progress");
 
-const prepLen=2*Math.PI*70;
 const mainLen=2*Math.PI*110;
+const prepLen=2*Math.PI*70;
 
-prepCircle.style.strokeDasharray=prepLen;
 mainCircle.style.strokeDasharray=mainLen;
+prepCircle.style.strokeDasharray=prepLen;
+
+/* ================= FORMAT ================= */
 
 function format(ms){
  let m=Math.floor(ms/60000);
@@ -334,21 +261,32 @@ function format(ms){
  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}.${String(cs).padStart(2,"0")}`;
 }
 
-function tick(t){
+/* ================= TIMER ================= */
 
- if(!start) start=t;
- if(running) elapsed=t-start;
+function tick(t){
+ if(running){
+  if(!start) start=t-elapsed;
+  elapsed=t-start;
+ }
 
  let dur=speeches[i].duration*1000;
- let display=mode==="timer"?dur-elapsed:elapsed;
+ let remaining=Math.max(0,dur-elapsed);
+ if(remaining===0) running=false;
 
- mainCircle.style.strokeDashoffset=mainLen-(elapsed/dur)*mainLen;
+ let display=mode==="timer"?remaining:elapsed;
+
+ mainCircle.style.strokeDashoffset=mainLen-(Math.min(elapsed/dur,1))*mainLen;
  document.getElementById("time").textContent=format(display);
  document.getElementById("speech").textContent=speeches[i].name;
 
  if(prepRunning){
-  if(!prepStart) prepStart=t;
+  if(!prepStart) prepStart=t-prepElapsed;
   prepElapsed=t-prepStart;
+
+  if(prepElapsed>=prepDuration){
+    prepElapsed=prepDuration;
+    prepRunning=false;
+  }
 
   prepCircle.style.strokeDashoffset=
     prepLen-(prepElapsed/prepDuration)*prepLen;
@@ -360,7 +298,8 @@ function tick(t){
  requestAnimationFrame(tick);
 }
 
-/* CONTROLS */
+/* ================= TAP ================= */
+
 function toggleMain(){
  running=!running;
  if(running) start=performance.now()-elapsed;
@@ -371,51 +310,92 @@ function togglePrep(){
  if(prepRunning) prepStart=performance.now()-prepElapsed;
 }
 
-function nextSpeech(){i=Math.min(speeches.length-1,i+1);elapsed=0;start=0;}
-function prevSpeech(){i=Math.max(0,i-1);elapsed=0;start=0;}
+/* ================= DOUBLE TAP RESET ================= */
+
+function doubleTap(el,cb){
+ let last=0;
+ el.addEventListener("click",()=>{
+  const now=Date.now();
+  if(now-last<300) cb();
+  last=now;
+ });
+}
+
+doubleTap(document.getElementById("mainRing"),()=>{
+ elapsed=0;start=0;running=false;
+});
+
+doubleTap(document.getElementById("prepRing"),()=>{
+ prepElapsed=0;prepStart=0;prepRunning=false;
+});
+
+/* ================= SWIPE ================= */
+
+let touchStartX=0;
+
+function nextSpeech(){i=Math.min(speeches.length-1,i+1);resetMain();}
+function prevSpeech(){i=Math.max(0,i-1);resetMain();}
+
+function resetMain(){elapsed=0;start=0;running=false;}
+
+document.addEventListener("touchstart",e=>{
+ touchStartX=e.touches[0].clientX;
+});
+
+document.addEventListener("touchend",e=>{
+ let dx=e.changedTouches[0].clientX-touchStartX;
+ if(Math.abs(dx)>50){
+  dx<0?nextSpeech():prevSpeech();
+ }
+});
+
+/* mouse swipe for PC */
+let mouseDown=false,startX=0;
+
+document.addEventListener("mousedown",e=>{
+ mouseDown=true;startX=e.clientX;
+});
+document.addEventListener("mouseup",e=>{
+ if(!mouseDown) return;
+ mouseDown=false;
+ let dx=e.clientX-startX;
+ if(Math.abs(dx)>50){
+  dx<0?nextSpeech():prevSpeech();
+ }
+});
+
+/* ================= MODE ================= */
 
 function toggleMode(){
  mode=mode==="timer"?"stopwatch":"timer";
 }
 
-/* THEME */
-const themeClasses=[
- "dark","light","min-dark","min-light",
- "aesthetic","hacker","scifi","synthwave"
-];
+/* ================= THEMES ================= */
 
 function setTheme(t){
- document.body.classList.remove(...themeClasses);
+ document.body.className="";
  document.body.classList.add(t);
+ document.body.classList.add("portrait");
 }
 
-/* KEYS */
-document.addEventListener("keydown",(e)=>{
- if(e.repeat) return;
+/* ================= SETTINGS ================= */
 
- if(e.code==="Space"){
-  e.preventDefault();
-  toggleMain();
- }
-
- if(e.code==="KeyP") togglePrep();
- if(e.code==="KeyR") resetMain();
- if(e.code==="ArrowRight") nextSpeech();
- if(e.code==="ArrowLeft") prevSpeech();
-});
-
-/* PANEL */
 function togglePanel(){
- document.getElementById("panel").classList.toggle("open");
- document.getElementById("overlay").classList.toggle("show");
+ panel.classList.toggle("open");
+ overlay.classList.toggle("show");
+}
+function closePanel(){
+ panel.classList.remove("open");
+ overlay.classList.remove("show");
 }
 
-function closePanel(){
- document.getElementById("panel").classList.remove("open");
- document.getElementById("overlay").classList.remove("show");
-}
+/* ================= INIT ================= */
 
 requestAnimationFrame(tick);
+
+/* click to start */
+document.getElementById("mainRing").addEventListener("click",toggleMain);
+document.getElementById("prepRing").addEventListener("click",togglePrep);
 
 </script>
 
