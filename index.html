@@ -1,184 +1,433 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>My Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>LD Debate Timer Ultimate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ORBITRON FONT -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-  <!-- TailwindCSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root {
+  --bg:#0b1220;
+  --text:#e5e7eb;
+  --accent:#22d3ee;
+  --glow:0 0 12px var(--accent);
+  --yellow:#facc15;
+  --red:#ef4444;
+  --font:'Orbitron', sans-serif;
+}
 
-  <!-- GLOBAL STYLES -->
-  <style>
-    * {
-      font-family: 'Orbitron', sans-serif !important;
-    }
+/* ================= THEMES ================= */
+body.light { --bg:#f1f5f9; --text:#0f172a; --accent:#3b82f6; }
+body.dark { --bg:#0b1220; }
+body.retro { --accent:#f472b6; }
+body.professional { --accent:#60a5fa; }
+body.terminal { --bg:#000; --text:#00ff00; --accent:#00ff00; --glow:0 0 10px #00ff00; }
+body.aesthetic { --accent:#fff; }
+body.min-dark { --bg:#000; --text:#fff; --accent:#fff; --glow:none; }
+body.min-light { --bg:#fff; --text:#000; --accent:#000; --glow:none; }
 
-    /* Neon glow */
-    .neon-blue {
-      text-shadow: 0 0 8px rgba(0, 180, 255, 0.8), 0 0 16px rgba(0, 180, 255, 0.6);
-    }
+/* 🌌 SYNTHWAVE */
+body.synthwave {
+  --bg:#0a001a;
+  --text:#ffccff;
+  --accent:#ff4dff;
+  --glow:0 0 18px #ff4dff;
+  overflow:hidden;
+}
 
-    /* Remove all rounded corners globally */
-    .no-round {
-      border-radius: 0 !important;
-    }
-  </style>
+body.synthwave::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(rgba(255,77,255,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,77,255,0.15) 1px, transparent 1px);
+  background-size:50px 50px;
+  transform:perspective(500px) rotateX(60deg);
+  transform-origin:bottom;
+  animation:gridMove 6s linear infinite;
+  z-index:-1;
+}
+
+@keyframes gridMove {
+  from { transform:perspective(500px) rotateX(60deg) translateY(0); }
+  to   { transform:perspective(500px) rotateX(60deg) translateY(50px); }
+}
+
+/* ================= BASE ================= */
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* TOP */
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
+}
+
+.gear {
+  font-size:2rem;
+  cursor:pointer;
+  transition:transform 0.4s;
+}
+
+.gear:hover { transform:rotate(180deg); }
+
+.gear.spin {
+  transform:rotate(360deg);
+}
+
+/* MAIN */
+.main {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+/* TIMER */
+.circle {
+  width:min(60vw,420px);
+  height:min(60vw,420px);
+  position:relative;
+}
+
+svg {
+  transform:rotate(-90deg);
+  width:100%;
+  height:100%;
+}
+
+circle {
+  fill:none;
+  stroke-width:12;
+}
+
+.bg { stroke:rgba(255,255,255,0.1); }
+
+.progress {
+  stroke:var(--accent);
+  stroke-linecap:round;
+  filter:drop-shadow(var(--glow));
+}
+
+.time {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:clamp(2rem,6vw,4rem);
+}
+
+/* STATES */
+.yellow { color:var(--yellow); stroke:var(--yellow); }
+.red { color:var(--red); stroke:var(--red); }
+.blink { animation:blink 1s infinite; }
+
+@keyframes blink { 50%{opacity:0.2;} }
+
+/* PREP */
+.prep {
+  display:flex;
+  gap:20px;
+  margin-bottom:20px;
+  align-items:center;
+}
+
+/* SETTINGS */
+.settings {
+  position:fixed;
+  right:-320px;
+  top:0;
+  width:300px;
+  height:100%;
+  background:#111;
+  padding:20px;
+  transition:0.3s;
+  z-index:10;
+}
+
+.settings.open { right:0; }
+
+.overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  opacity:0;
+  pointer-events:none;
+}
+
+.overlay.active {
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* SWITCH */
+.switch {
+  display:flex;
+  justify-content:space-between;
+  margin:10px 0;
+}
+
+.toggle {
+  width:45px;
+  height:24px;
+  background:#444;
+  border-radius:20px;
+  position:relative;
+  cursor:pointer;
+}
+
+.toggle::after {
+  content:"";
+  position:absolute;
+  width:20px;
+  height:20px;
+  background:white;
+  border-radius:50%;
+  top:2px;
+  left:2px;
+  transition:0.3s;
+}
+
+.toggle.active {
+  background:var(--accent);
+}
+
+.toggle.active::after {
+  transform:translateX(21px);
+}
+
+select {
+  width:100%;
+  margin-top:10px;
+}
+</style>
 </head>
 
-<body class="bg-black text-blue-300 p-6">
+<body class="dark">
 
-  <!-- TOP HORIZONTAL CARD -->
-  <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4 mb-6 no-round">
+<div class="topbar">
+  <div id="speech"></div>
+  <div class="gear" id="gear" onclick="toggleSettings(event)" onmouseenter="spinGear()">⚙️</div>
+</div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="main">
 
-      <!-- WEATHER -->
-      <div>
-        <h2 class="text-lg font-semibold mb-1 neon-blue">Weather</h2>
-        <div id="weather" class="text-blue-300 neon-blue">
-          Loading weather...
-        </div>
-      </div>
+  <!-- PREP TIMERS -->
+  <div class="prep">
 
-      <!-- CLOCK -->
-      <div class="text-center">
-        <h2 class="text-lg font-semibold mb-1 neon-blue">Date & Time</h2>
-        <div id="clock" class="text-2xl font-light neon-blue"></div>
-      </div>
-
-      <!-- NEWS -->
-      <div>
-        <h2 class="text-lg font-semibold mb-1 neon-blue">Latest News</h2>
-        <ul id="news" class="text-blue-300 space-y-1 text-sm">
-          <li class="neon-blue">News will appear here...</li>
-        </ul>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- BOTTOM SECTION -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-    <!-- ADSB CARD -->
-    <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4 no-round">
-      <h2 class="text-xl font-semibold mb-3 neon-blue">ADSB Exchange Radar</h2>
-      <iframe 
-        src="https://globe.adsbexchange.com" 
-        class="w-full h-[450px] border-0 no-round">
-      </iframe>
+    <div id="affBox">
+      <button onclick="togglePrep('aff')">Aff</button>
+      <div id="affTime"></div>
     </div>
 
-    <!-- SECOND NEWS CARD -->
-    <div class="bg-blue-100/10 border border-blue-400 shadow-xl p-4 no-round">
-      <h2 class="text-xl font-semibold mb-3 neon-blue">More News</h2>
-      <ul id="news2" class="text-blue-300 space-y-2 text-sm">
-        <li class="neon-blue">Loading more news...</li>
-      </ul>
+    <div id="cxBox">
+      <button onclick="togglePrep('cx')">CX</button>
+      <div id="cxTime"></div>
+    </div>
+
+    <div id="negBox">
+      <button onclick="togglePrep('neg')">Neg</button>
+      <div id="negTime"></div>
     </div>
 
   </div>
 
-  <!-- JAVASCRIPT -->
-  <script>
-    // CLOCK
-    function updateClock() {
-      const now = new Date();
-      document.getElementById("clock").textContent = now.toLocaleString();
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+  <!-- MAIN TIMER -->
+  <div class="circle">
+    <svg>
+      <circle class="bg" cx="210" cy="210" r="189"/>
+      <circle id="progress" class="progress" cx="210" cy="210" r="189"/>
+    </svg>
+    <div id="time" class="time"></div>
+  </div>
 
-    // WEATHER – updates every 5 minutes
-    function loadWeather() {
-      fetch("https://api.open-meteo.com/v1/forecast?latitude=44.98&longitude=-93.27&current_weather=true")
-        .then(res => res.json())
-        .then(data => {
-          const celsius = data.current_weather.temperature;
-          const tempF = (celsius * 9/5 + 32).toFixed(1);
+</div>
 
-          document.getElementById("weather").innerHTML = `
-            <div class="text-3xl font-light text-blue-300 neon-blue">${tempF}°F</div>
-            <div class="text-blue-400 text-sm neon-blue">Weather code: ${data.current_weather.weathercode}</div>
-          `;
-        })
-        .catch(() => {
-          document.getElementById("weather").textContent = "Unable to load weather.";
-        });
-    }
-    loadWeather();
-    setInterval(loadWeather, 300000); // 5 min refresh
+<!-- SETTINGS -->
+<div class="settings" id="settings">
+  <h3>Settings</h3>
 
-    // NEWS CARD 1 (Reuters)
-    function loadNews() {
-      const rssUrl = "https://www.reuters.com/rssFeed/worldNews";
-      const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+  <div class="switch">
+    <span>Main Countdown</span>
+    <div class="toggle active" onclick="toggleMainMode(this)"></div>
+  </div>
 
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          const parser = new DOMParser();
-          const xml = parser.parseFromString(data.contents, "text/xml");
-          const items = xml.querySelectorAll("item");
+  <div class="switch">
+    <span>Prep Countdown</span>
+    <div class="toggle active" onclick="togglePrepMode(this)"></div>
+  </div>
 
-          const list = document.getElementById("news");
-          list.innerHTML = "";
+  <div class="switch">
+    <span>Show Aff</span>
+    <div class="toggle active" onclick="toggleVis('affBox',this)"></div>
+  </div>
 
-          for (let i = 0; i < 5; i++) {
-            const item = items[i];
-            const title = item.querySelector("title").textContent;
-            const link = item.querySelector("link").textContent;
+  <div class="switch">
+    <span>Show CX</span>
+    <div class="toggle active" onclick="toggleVis('cxBox',this)"></div>
+  </div>
 
-            const li = document.createElement("li");
-            li.innerHTML = `<a href="${link}" target="_blank" class="hover:underline neon-blue">${title}</a>`;
-            list.appendChild(li);
-          }
-        })
-        .catch(() => {
-          document.getElementById("news").innerHTML =
-            "<li class='neon-blue'>Failed to load news.</li>";
-        });
-    }
-    loadNews();
-    setInterval(loadNews, 60000); // 1 minute
+  <div class="switch">
+    <span>Show Neg</span>
+    <div class="toggle active" onclick="toggleVis('negBox',this)"></div>
+  </div>
 
-    // NEWS CARD 2 (NPR)
-    function loadNews2() {
-      const rssUrl = "https://feeds.npr.org/1001/rss.xml";
-      const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+  <label>Theme</label>
+  <select onchange="setTheme(this.value)">
+    <option value="dark">Dark</option>
+    <option value="light">Light</option>
+    <option value="retro">Retro</option>
+    <option value="professional">Professional</option>
+    <option value="terminal">Terminal</option>
+    <option value="aesthetic">Aesthetic</option>
+    <option value="min-dark">Minimal Dark</option>
+    <option value="min-light">Minimal Light</option>
+    <option value="synthwave">Synthwave</option>
+  </select>
+</div>
 
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          const parser = new DOMParser();
-          const xml = parser.parseFromString(data.contents, "text/xml");
-          const items = xml.querySelectorAll("item");
+<div class="overlay" id="overlay"></div>
 
-          const list = document.getElementById("news2");
-          list.innerHTML = "";
+<script>
+const speeches=[
+{name:"AC (Affirmative Constructive)",time:360000},
+{name:"CX (Cross Examination)",time:180000},
+{name:"NC (Negative Constructive)",time:420000},
+{name:"CX (Cross Examination)",time:180000},
+{name:"1AR",time:240000},
+{name:"NR",time:360000},
+{name:"2AR",time:180000}
+];
 
-          for (let i = 0; i < 5; i++) {
-            const item = items[i];
-            const title = item.querySelector("title").textContent;
-            const link = item.querySelector("link").textContent;
+let i=0;
+let time=load("time",speeches[0].time);
+let running=load("running",false);
+let countdown=load("countdown",true);
 
-            const li = document.createElement("li");
-            li.innerHTML = `<a href="${link}" target="_blank" class="hover:underline neon-blue">${title}</a>`;
-            list.appendChild(li);
-          }
-        })
-        .catch(() => {
-          document.getElementById("news2").innerHTML =
-            "<li class='neon-blue'>Failed to load news.</li>";
-        });
-    }
-    loadNews2();
-    setInterval(loadNews2, 60000); // 1 minute
-  </script>
+let aff=240000;
+let cx=240000;
+let neg=240000;
+
+let affRun=false;
+let cxRun=false;
+let negRun=false;
+
+const r=189,c=2*Math.PI*r;
+const prog=document.getElementById("progress");
+prog.style.strokeDasharray=c;
+
+/* AUTOSAVE */
+function save(){
+  localStorage.setItem("time",time);
+  localStorage.setItem("running",running);
+  localStorage.setItem("countdown",countdown);
+  localStorage.setItem("i",i);
+}
+
+function load(k,d){
+  let v=localStorage.getItem(k);
+  return v===null?d:JSON.parse(v);
+}
+
+i=load("i",0);
+
+/* FORMAT */
+function fmt(ms){
+  let s=Math.floor(ms/1000);
+  let m=Math.floor(s/60);
+  let sec=s%60;
+  let d=Math.floor((ms%1000)/100);
+  return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}.${d}`;
+}
+
+/* UPDATE */
+function update(){
+  let total=speeches[i].time;
+  let remaining=countdown?time:(total-time);
+
+  document.getElementById("speech").textContent=speeches[i].name;
+  document.getElementById("time").textContent=fmt(time);
+
+  prog.style.strokeDashoffset=c*(1-(Math.max(time,0)/total));
+
+  if(running) time+=countdown?-100:100;
+
+  if(affRun){ aff+=-100; aff=Math.max(0,Math.min(240000,aff)); }
+  if(cxRun){ cx+=-100; cx=Math.max(0,Math.min(240000,cx)); }
+  if(negRun){ neg+=-100; neg=Math.max(0,Math.min(240000,neg)); }
+
+  document.getElementById("affTime").textContent=fmt(aff);
+  document.getElementById("cxTime").textContent=fmt(cx);
+  document.getElementById("negTime").textContent=fmt(neg);
+
+  save();
+}
+
+setInterval(update,100);
+
+/* PREP */
+function togglePrep(t){
+  if(t==="aff") affRun=!affRun;
+  if(t==="cx") cxRun=!cxRun;
+  if(t==="neg") negRun=!negRun;
+}
+
+/* MODE SWITCH */
+function toggleMainMode(el){
+  let total=speeches[i].time;
+  time = total - time;
+  countdown=!countdown;
+  el.classList.toggle("active");
+}
+
+/* VISIBILITY */
+function toggleVis(id,el){
+  document.getElementById(id).style.display =
+    document.getElementById(id).style.display==="none"?"block":"none";
+  el.classList.toggle("active");
+}
+
+/* SETTINGS */
+function toggleSettings(e){
+  e.stopPropagation();
+  settings.classList.toggle("open");
+  overlay.classList.toggle("active");
+  gear.classList.toggle("spin");
+}
+
+overlay.onclick=()=>toggleSettings(new Event("click"));
+
+function setTheme(t){
+  document.body.className=t;
+  save();
+}
+
+/* GEAR SPIN */
+function spinGear(){
+  const g=document.getElementById("gear");
+  g.classList.remove("spin");
+  void g.offsetWidth;
+  g.classList.add("spin");
+}
+
+/* KEYS */
+document.addEventListener("keydown",e=>{
+  if(e.code==="Space"){e.preventDefault();running=!running;}
+});
+
+</script>
 
 </body>
 </html>
