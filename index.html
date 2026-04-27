@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>LD Debate Timer</title>
+<title>Debate Timer (LD / WSD)</title>
 
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;700&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
 
@@ -16,10 +16,7 @@
   --card:rgba(255,255,255,0.06);
 }
 
-*{
-  box-sizing:border-box;
-  font-family:"JetBrains Mono", monospace;
-}
+*{box-sizing:border-box;font-family:"JetBrains Mono", monospace;}
 
 body{
   margin:0;
@@ -33,17 +30,10 @@ body{
   transition:.25s;
 }
 
-/* ================= THEMES ================= */
+/* ================= CORE THEMES ================= */
 
 body.dark{--accent:#7cf7ff;}
-
-body.light{
-  --bg:#f5f7ff;
-  --fg:#111;
-  --accent:#ff4d4d;
-  --ring:#cfd6ff;
-}
-
+body.light{--bg:#f5f7ff;--fg:#111;--accent:#ff4d4d;--ring:#cfd6ff;}
 body.min-dark{--bg:#111;--fg:#ddd;--accent:#aaa;--ring:#333;}
 body.min-light{--bg:#fafafa;--fg:#000;--accent:#000;--ring:#00000033;}
 
@@ -54,47 +44,46 @@ body.hacker{--bg:#000;--fg:#00ff66;--accent:#00ff66;}
 body.scifi{--bg:#050816;--fg:#d6f3ff;--accent:#4df;}
 body.synthwave{--bg:#0a0014;--fg:#ffd6ff;--accent:#ff3df2;}
 
-/* ================= SPACE ================= */
+/* ================= NEW THEMES ================= */
 
 body.space{
-  --bg:#000008;
+  --bg:#000010;
   --fg:#e6f1ff;
   --accent:#8ab4ff;
+  --ring:#1a2a44;
 }
 
-/* ================= PRIDE (FIXED HORIZONTAL STRIPES) ================= */
+body.ukraine{
+  --bg:#0057b7;
+  --fg:#ffd700;
+  --accent:#ffd700;
+  --ring:#003a7a;
+}
+
+body.minnesota{
+  --bg:#0b1b2b;
+  --fg:#eaf4ff;
+  --accent:#9fd3ff;
+  --ring:#163a5a;
+}
 
 body.pride{
   --bg:#0f0f14;
-  --fg:#fff;
-  --accent:#fff;
-
-  /* TRUE horizontal stripes */
-  background:linear-gradient(to bottom,
-    #e40303 0% 16.66%,
-    #ff8c00 16.66% 33.33%,
-    #ffed00 33.33% 50%,
-    #008026 50% 66.66%,
-    #004dff 66.66% 83.33%,
-    #750787 83.33% 100%
-  );
-}
-
-/* ================= MINNESOTA ================= */
-
-body.minnesota{
-  --bg:#6bb6ff;
   --fg:#ffffff;
-  --accent:#ffffff;
+  --accent:#ff4fbf;
+  --ring:#2a2a2a;
 }
-
-/* ================= APPLE VALLEY ================= */
 
 body.applevalley{
-  --bg:#2f241f;
-  --fg:#fff4e6;
-  --accent:#c9a24d;
+  --bg:#3b2f2f;
+  --fg:#fff3e0;
+  --accent:#d4af37;
+  --ring:#5a4545;
 }
+
+/* ================= WS MODE ================= */
+
+body.wsMode .prep-ring{display:none;}
 
 /* ================= LAYOUT ================= */
 
@@ -185,7 +174,6 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
   display:none;
   z-index:99980;
 }
-
 .overlay.show{display:block;}
 
 .btn{
@@ -198,6 +186,31 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
   border-radius:8px;
   font-size:12px;
 }
+
+/* SWITCH */
+#formatSwitch{
+  appearance:none;
+  width:44px;
+  height:22px;
+  background:var(--ring);
+  border-radius:999px;
+  position:relative;
+  cursor:pointer;
+}
+
+#formatSwitch::before{
+  content:"";
+  position:absolute;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  top:2px;
+  left:2px;
+  background:var(--accent);
+  transition:.2s;
+}
+
+#formatSwitch:checked::before{left:24px;}
 </style>
 </head>
 
@@ -208,50 +221,64 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 
 <div class="panel" id="panel">
 
-  <button class="btn" id="close">Close</button>
+<button class="btn" id="close">Close</button>
 
-  <p>Mode</p>
-  <button class="btn" id="toggleMode">Timer / Stopwatch</button>
+<p>Format</p>
+<label style="display:flex;align-items:center;gap:10px;">
+  <span>LD</span>
+  <input type="checkbox" id="formatSwitch"/>
+  <span>WSD</span>
+</label>
 
-  <p>Themes</p>
-  <button class="btn" data-theme="dark">Dark</button>
-  <button class="btn" data-theme="light">Light</button>
-  <button class="btn" data-theme="aether">Aether</button>
-  <button class="btn" data-theme="aesthetic">Aesthetic</button>
-  <button class="btn" data-theme="hacker">Hacker</button>
-  <button class="btn" data-theme="scifi">Sci-Fi</button>
-  <button class="btn" data-theme="synthwave">Synthwave</button>
-  <button class="btn" data-theme="space">Space</button>
-  <button class="btn" data-theme="pride">Pride</button>
-  <button class="btn" data-theme="minnesota">Minnesota</button>
-  <button class="btn" data-theme="applevalley">Apple Valley</button>
+<p>Themes</p>
+
+<!-- CORE -->
+<button class="btn" data-theme="dark">Dark</button>
+<button class="btn" data-theme="light">Light</button>
+<button class="btn" data-theme="min-dark">Min Dark</button>
+<button class="btn" data-theme="min-light">Min Light</button>
+
+<!-- ORIGINAL CUSTOM -->
+<button class="btn" data-theme="aether">Aether</button>
+<button class="btn" data-theme="aesthetic">Aesthetic</button>
+<button class="btn" data-theme="hacker">Hacker</button>
+<button class="btn" data-theme="scifi">Sci-Fi</button>
+<button class="btn" data-theme="synthwave">Synthwave</button>
+
+<!-- NEW THEMES -->
+<button class="btn" data-theme="space">Space</button>
+<button class="btn" data-theme="ukraine">Ukraine</button>
+<button class="btn" data-theme="minnesota">Minnesota</button>
+<button class="btn" data-theme="pride">Pride</button>
+<button class="btn" data-theme="applevalley">Apple Valley</button>
 
 </div>
 
 <div class="wrapper">
 
-  <div class="prep-ring" id="prepRing">
-    <div class="label">PREP</div>
-    <svg viewBox="0 0 200 200">
-      <circle class="bg-ring" cx="100" cy="100" r="70"></circle>
-      <circle class="prep-progress" cx="100" cy="100" r="70"></circle>
-    </svg>
-    <div class="prep-time" id="prepTime">04:00.00</div>
-  </div>
+<div class="prep-ring" id="prepRing">
+  <div class="label">PREP</div>
+  <svg viewBox="0 0 200 200">
+    <circle class="bg-ring" cx="100" cy="100" r="70"></circle>
+    <circle class="prep-progress" cx="100" cy="100" r="70"></circle>
+  </svg>
+  <div class="prep-time" id="prepTime">04:00.00</div>
+</div>
 
-  <div class="ring" id="mainRing">
-    <div class="label" id="speech">Ready</div>
-    <svg viewBox="0 0 280 280">
-      <circle class="bg-ring" cx="140" cy="140" r="110"></circle>
-      <circle class="progress" cx="140" cy="140" r="110"></circle>
-    </svg>
-    <div class="time" id="time">00:00.00</div>
-  </div>
+<div class="ring" id="mainRing">
+  <div class="label" id="speech">Ready</div>
+  <svg viewBox="0 0 280 280">
+    <circle class="bg-ring" cx="140" cy="140" r="110"></circle>
+    <circle class="progress" cx="140" cy="140" r="110"></circle>
+  </svg>
+  <div class="time" id="time">00:00.00</div>
+</div>
 
 </div>
 
 <script>
-let i=0,running=false,start=0,elapsed=0,mode="timer";
+let i=0,running=false,start=0,elapsed=0,mode="timer",wsMode=false;
+
 let prepRunning=false,prepStart=0,prepElapsed=0,prepDuration=240000;
 
 const speeches=[
@@ -262,6 +289,17 @@ const speeches=[
  {name:"1AR (4)",duration:240},
  {name:"NR (6)",duration:360},
  {name:"2AR (3)",duration:180}
+];
+
+const wsSpeech=[
+ {name:"Prop 1",duration:480},
+ {name:"Opp 1",duration:480},
+ {name:"Prop 2",duration:480},
+ {name:"Opp 2",duration:480},
+ {name:"Prop 3",duration:480},
+ {name:"Opp 3",duration:480},
+ {name:"Opp Rep",duration:240},
+ {name:"Prop Rep",duration:240}
 ];
 
 const main=document.querySelector(".progress");
@@ -286,7 +324,8 @@ function tick(t){
   elapsed=t-start;
  }
 
- let dur=speeches[i].duration*1000;
+ let list=wsMode?wsSpeech:speeches;
+ let dur=list[i].duration*1000;
  let rem=Math.max(0,dur-elapsed);
  if(rem===0) running=false;
 
@@ -295,10 +334,10 @@ function tick(t){
  main.style.strokeDashoffset=
   mainLen-(Math.min(elapsed/dur,1))*mainLen;
 
- speech.textContent=speeches[i].name;
+ speech.textContent=list[i].name;
  time.textContent=fmt(show);
 
- if(prepRunning){
+ if(!wsMode && prepRunning){
   if(!prepStart) prepStart=t-prepElapsed;
   prepElapsed=t-prepStart;
 
@@ -317,43 +356,27 @@ function tick(t){
 }
 
 /* CONTROLS */
-function toggleMain(){
- running=!running;
- if(running) start=performance.now()-elapsed;
-}
-
-function togglePrep(){
- prepRunning=!prepRunning;
- if(prepRunning) prepStart=performance.now()-prepElapsed;
-}
-
+function toggleMain(){running=!running;if(running) start=performance.now()-elapsed;}
+function togglePrep(){prepRunning=!prepRunning;if(prepRunning) prepStart=performance.now()-prepElapsed;}
 function resetMain(){elapsed=0;start=0;running=false;}
-function resetPrep(){prepElapsed=0;prepStart=0;prepRunning=false;}
-
-function next(){i=Math.min(speeches.length-1,i+1);resetMain();}
+function next(){let l=wsMode?wsSpeech:speeches;i=Math.min(l.length-1,i+1);resetMain();}
 function prev(){i=Math.max(0,i-1);resetMain();}
 
-/* MODE */
-document.getElementById("toggleMode").onclick=()=>{
- mode=mode==="timer"?"stopwatch":"timer";
-};
+/* SWITCH */
+document.getElementById("formatSwitch").addEventListener("change",e=>{
+ wsMode=e.target.checked;
+ document.body.classList.toggle("wsMode",wsMode);
+ i=0;
+ resetMain();
+});
 
 /* SETTINGS */
 const panel=document.getElementById("panel");
 const overlay=document.getElementById("overlay");
 
-document.getElementById("settingsBtn").onclick=()=>{
- panel.classList.add("open");
- overlay.classList.add("show");
-};
-
-document.getElementById("close").onclick=closePanel;
-overlay.onclick=closePanel;
-
-function closePanel(){
- panel.classList.remove("open");
- overlay.classList.remove("show");
-}
+settingsBtn.onclick=()=>{panel.classList.add("open");overlay.classList.add("show");};
+close.onclick=()=>{panel.classList.remove("open");overlay.classList.remove("show");};
+overlay.onclick=close.onclick;
 
 /* THEMES */
 document.querySelectorAll("[data-theme]").forEach(b=>{
@@ -367,9 +390,6 @@ document.querySelectorAll("[data-theme]").forEach(b=>{
 /* INPUT */
 mainRing.onclick=toggleMain;
 prepRing.onclick=togglePrep;
-
-mainRing.ondblclick=resetMain;
-prepRing.ondblclick=resetPrep;
 
 document.addEventListener("keydown",e=>{
  if(e.repeat) return;
