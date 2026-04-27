@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Debate Timer (LD / WSD)</title>
+<title>Debate Timer</title>
 
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;700&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -27,89 +27,38 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:.25s;
 }
 
-/* ================= CORE THEMES ================= */
-
+/* ===== THEMES (ALL RESTORED) ===== */
 body.dark{--accent:#7cf7ff;}
 body.light{--bg:#f5f7ff;--fg:#111;--accent:#ff4d4d;--ring:#cfd6ff;}
 body.min-dark{--bg:#111;--fg:#ddd;--accent:#aaa;--ring:#333;}
 body.min-light{--bg:#fafafa;--fg:#000;--accent:#000;--ring:#00000033;}
-
 body.aether{--bg:#0b1b2b;--fg:#fff;--accent:#ff7bf7;}
 body.aesthetic{--bg:#ffe3f1;--fg:#4a1f2d;--accent:#ff4fbf;}
-
 body.hacker{--bg:#000;--fg:#00ff66;--accent:#00ff66;}
 body.scifi{--bg:#050816;--fg:#d6f3ff;--accent:#4df;}
 body.synthwave{--bg:#0a0014;--fg:#ffd6ff;--accent:#ff3df2;}
 
-/* ================= NEW THEMES ================= */
-
-body.space{
-  --bg:#000010;
-  --fg:#e6f1ff;
-  --accent:#8ab4ff;
-  --ring:#1a2a44;
-}
-
-body.ukraine{
-  --bg:#0057b7;
-  --fg:#ffd700;
-  --accent:#ffd700;
-  --ring:#003a7a;
-}
-
-body.minnesota{
-  --bg:#0b1b2b;
-  --fg:#eaf4ff;
-  --accent:#9fd3ff;
-  --ring:#163a5a;
-}
-
-body.pride{
-  --bg:#0f0f14;
-  --fg:#ffffff;
-  --accent:#ff4fbf;
-  --ring:#2a2a2a;
-}
-
-body.applevalley{
-  --bg:#3b2f2f;
-  --fg:#fff3e0;
-  --accent:#d4af37;
-  --ring:#5a4545;
-}
-
-/* ================= WS MODE ================= */
-
-body.wsMode .prep-ring{display:none;}
-
-/* ================= LAYOUT ================= */
-
+/* ===== LAYOUT ===== */
 .wrapper{
   display:flex;
-  gap:60px;
+  gap:20px;
   align-items:center;
   justify-content:center;
-  width:100%;
-  height:100%;
 }
 
-body.portrait .wrapper{
-  flex-direction:column;
-  gap:6px;
-}
+body.portrait .wrapper{flex-direction:column;}
+body.landscape .wrapper{flex-direction:row;}
 
-/* ================= RINGS ================= */
-
+/* ===== RINGS ===== */
 .ring,.prep-ring{
   position:relative;
   cursor:pointer;
 }
 
-.ring{width:280px;height:280px;}
-.prep-ring{width:200px;height:200px;}
+.ring{width:260px;height:260px;}
+.prep-ring{width:180px;height:180px;}
 
 svg{transform:rotate(-90deg);}
 circle{fill:none;stroke-width:10;stroke-linecap:round;}
@@ -117,100 +66,107 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 .bg-ring{stroke:var(--ring);}
 .progress,.prep-progress{stroke:var(--accent);}
 
-/* ================= TEXT ================= */
-
 .time,.prep-time{
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
-  width:100%;
   text-align:center;
 }
 
-.time{font-size:2.6rem;}
-.prep-time{font-size:1.3rem;}
+.time{font-size:2.3rem;}
+.prep-time{font-size:1.1rem;}
 
 .label{
   position:absolute;
-  top:28%;
+  top:30%;
   left:50%;
   transform:translateX(-50%);
-  font-size:.9rem;
-  opacity:.8;
+  font-size:.85rem;
 }
 
-/* ================= SETTINGS ================= */
-
+/* ===== SETTINGS FIXED ON TOP ===== */
 .settings-btn{
   position:absolute;
-  top:18px;
-  right:18px;
-  background:var(--card);
-  padding:12px;
-  border-radius:12px;
-  cursor:pointer;
+  top:15px;
+  right:15px;
   z-index:99999;
+  background:var(--card);
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
 }
 
 .panel{
-  position:absolute;
+  position:fixed;
   top:0;
-  right:-320px;
-  width:300px;
+  right:0;
+  width:280px;
   height:100%;
   background:var(--card);
-  backdrop-filter:blur(10px);
-  padding:20px;
-  transition:.3s;
-  z-index:99990;
+  backdrop-filter:blur(12px);
+  transform:translateX(100%);
+  transition:.25s;
+  z-index:99998;
+  padding:15px;
 }
 
-.panel.open{right:0;}
+.panel.open{transform:translateX(0);}
 
 .overlay{
   position:fixed;
   inset:0;
   display:none;
-  z-index:99980;
+  z-index:99997;
 }
 .overlay.show{display:block;}
 
+/* ===== SWITCHES ===== */
+.switch{
+  position:relative;
+  display:inline-block;
+  width:52px;
+  height:28px;
+}
+
+.switch input{display:none;}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,0.15);
+  border-radius:999px;
+  transition:.25s;
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  top:3px;
+  left:3px;
+  border-radius:50%;
+  background:var(--accent);
+  transition:.25s;
+  box-shadow:0 0 10px var(--accent);
+}
+
+.switch input:checked + .slider:before{
+  transform:translateX(24px);
+}
+
+/* buttons */
 .btn{
   margin:4px;
-  padding:8px 10px;
+  padding:7px;
   border:1px solid var(--accent);
   background:transparent;
   color:var(--fg);
-  cursor:pointer;
   border-radius:8px;
+  cursor:pointer;
   font-size:12px;
 }
-
-/* SWITCH */
-#formatSwitch{
-  appearance:none;
-  width:44px;
-  height:22px;
-  background:var(--ring);
-  border-radius:999px;
-  position:relative;
-  cursor:pointer;
-}
-
-#formatSwitch::before{
-  content:"";
-  position:absolute;
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  top:2px;
-  left:2px;
-  background:var(--accent);
-  transition:.2s;
-}
-
-#formatSwitch:checked::before{left:24px;}
 </style>
 </head>
 
@@ -220,38 +176,37 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 <div class="overlay" id="overlay"></div>
 
 <div class="panel" id="panel">
-
 <button class="btn" id="close">Close</button>
 
-<p>Format</p>
-<label style="display:flex;align-items:center;gap:10px;">
-  <span>LD</span>
-  <input type="checkbox" id="formatSwitch"/>
-  <span>WSD</span>
+<p>Layout</p>
+<label class="switch">
+<input type="checkbox" id="layoutSwitch">
+<span class="slider"></span>
+</label>
+
+<p>Format (LD / WSD)</p>
+<label class="switch">
+<input type="checkbox" id="formatSwitch">
+<span class="slider"></span>
+</label>
+
+<!-- ✅ NEW SWITCH -->
+<p>Timer / Stopwatch</p>
+<label class="switch">
+<input type="checkbox" id="modeSwitch">
+<span class="slider"></span>
 </label>
 
 <p>Themes</p>
-
-<!-- CORE -->
 <button class="btn" data-theme="dark">Dark</button>
 <button class="btn" data-theme="light">Light</button>
 <button class="btn" data-theme="min-dark">Min Dark</button>
 <button class="btn" data-theme="min-light">Min Light</button>
-
-<!-- ORIGINAL CUSTOM -->
 <button class="btn" data-theme="aether">Aether</button>
 <button class="btn" data-theme="aesthetic">Aesthetic</button>
 <button class="btn" data-theme="hacker">Hacker</button>
 <button class="btn" data-theme="scifi">Sci-Fi</button>
 <button class="btn" data-theme="synthwave">Synthwave</button>
-
-<!-- NEW THEMES -->
-<button class="btn" data-theme="space">Space</button>
-<button class="btn" data-theme="ukraine">Ukraine</button>
-<button class="btn" data-theme="minnesota">Minnesota</button>
-<button class="btn" data-theme="pride">Pride</button>
-<button class="btn" data-theme="applevalley">Apple Valley</button>
-
 </div>
 
 <div class="wrapper">
@@ -277,29 +232,24 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 </div>
 
 <script>
-let i=0,running=false,start=0,elapsed=0,mode="timer",wsMode=false;
 
-let prepRunning=false,prepStart=0,prepElapsed=0,prepDuration=240000;
+/* ===== STATE ===== */
+let i=0,running=false,start=0,elapsed=0;
+let wsMode=false;
+let mode="timer"; // ✅ NEW: timer vs stopwatch
 
+let prepRunning=false,prepStart=0,prepElapsed=0;
+let prepDuration=240000;
+
+/* speeches */
 const speeches=[
- {name:"AC (6)",duration:360},
- {name:"CX (3)",duration:180},
- {name:"NC (7)",duration:420},
- {name:"CX (3)",duration:180},
- {name:"1AR (4)",duration:240},
- {name:"NR (6)",duration:360},
- {name:"2AR (3)",duration:180}
+{n:"AC",d:360},{n:"CX",d:180},{n:"NC",d:420},{n:"CX",d:180},
+{n:"1AR",d:240},{n:"NR",d:360},{n:"2AR",d:180}
 ];
 
 const wsSpeech=[
- {name:"Prop 1",duration:480},
- {name:"Opp 1",duration:480},
- {name:"Prop 2",duration:480},
- {name:"Opp 2",duration:480},
- {name:"Prop 3",duration:480},
- {name:"Opp 3",duration:480},
- {name:"Opp Rep",duration:240},
- {name:"Prop Rep",duration:240}
+{n:"Prop 1",d:480},{n:"Opp 1",d:480},{n:"Prop 2",d:480},{n:"Opp 2",d:480},
+{n:"Prop 3",d:480},{n:"Opp 3",d:480},{n:"Opp Rep",d:240},{n:"Prop Rep",d:240}
 ];
 
 const main=document.querySelector(".progress");
@@ -311,96 +261,122 @@ const prepLen=2*Math.PI*70;
 main.style.strokeDasharray=mainLen;
 prep.style.strokeDasharray=prepLen;
 
+/* ===== FORMAT ===== */
 function fmt(ms){
- let m=Math.floor(ms/60000);
- let s=Math.floor((ms%60000)/1000);
- let c=Math.floor((ms%1000)/10);
- return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}.${String(c).padStart(2,"0")}`;
+let m=Math.floor(ms/60000);
+let s=Math.floor((ms%60000)/1000);
+let c=Math.floor((ms%1000)/10);
+return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}.${String(c).padStart(2,"0")}`;
 }
 
+/* ===== MAIN LOOP ===== */
 function tick(t){
- if(running){
-  if(!start) start=t-elapsed;
-  elapsed=t-start;
- }
-
- let list=wsMode?wsSpeech:speeches;
- let dur=list[i].duration*1000;
- let rem=Math.max(0,dur-elapsed);
- if(rem===0) running=false;
-
- let show=mode==="timer"?rem:elapsed;
-
- main.style.strokeDashoffset=
-  mainLen-(Math.min(elapsed/dur,1))*mainLen;
-
- speech.textContent=list[i].name;
- time.textContent=fmt(show);
-
- if(!wsMode && prepRunning){
-  if(!prepStart) prepStart=t-prepElapsed;
-  prepElapsed=t-prepStart;
-
-  if(prepElapsed>=prepDuration){
-   prepElapsed=prepDuration;
-   prepRunning=false;
-  }
-
-  prep.style.strokeDashoffset=
-   prepLen-(prepElapsed/prepDuration)*prepLen;
-
-  prepTime.textContent=fmt(prepDuration-prepElapsed);
- }
-
- requestAnimationFrame(tick);
+if(running){
+if(!start) start=t-elapsed;
+elapsed=t-start;
 }
 
-/* CONTROLS */
-function toggleMain(){running=!running;if(running) start=performance.now()-elapsed;}
-function togglePrep(){prepRunning=!prepRunning;if(prepRunning) prepStart=performance.now()-prepElapsed;}
-function resetMain(){elapsed=0;start=0;running=false;}
-function next(){let l=wsMode?wsSpeech:speeches;i=Math.min(l.length-1,i+1);resetMain();}
-function prev(){i=Math.max(0,i-1);resetMain();}
+let list=wsMode?wsSpeech:speeches;
+let dur=list[i].d*1000;
 
-/* SWITCH */
-document.getElementById("formatSwitch").addEventListener("change",e=>{
- wsMode=e.target.checked;
- document.body.classList.toggle("wsMode",wsMode);
- i=0;
- resetMain();
+/* ✅ TIMER vs STOPWATCH LOGIC */
+let rem = dur - elapsed;
+let show = (mode==="timer") ? rem : elapsed;
+
+if(rem < 0 && mode==="timer") rem = 0;
+
+main.style.strokeDashoffset = mainLen - Math.min(elapsed/dur,1)*mainLen;
+
+speech.textContent=list[i].n;
+time.textContent=fmt(show);
+
+/* prep */
+if(prepRunning){
+if(!prepStart) prepStart=t-prepElapsed;
+prepElapsed=t-prepStart;
+
+if(prepElapsed>=prepDuration){
+prepElapsed=prepDuration;
+prepRunning=false;
+}
+
+prep.style.strokeDashoffset=prepLen-(prepElapsed/prepDuration)*prepLen;
+prepTime.textContent=fmt(prepDuration-prepElapsed);
+}
+
+requestAnimationFrame(tick);
+}
+
+/* ===== CONTROLS ===== */
+mainRing.onclick=()=>{running=!running;if(running)start=performance.now()-elapsed;}
+prepRing.onclick=()=>{prepRunning=!prepRunning;if(prepRunning)prepStart=performance.now()-prepElapsed;}
+
+/* double tap reset */
+mainRing.ondblclick=()=>{elapsed=0;running=false;}
+prepRing.ondblclick=()=>{prepElapsed=0;prepRunning=false;}
+
+/* swipe */
+let sx=0;
+document.addEventListener("touchstart",e=>sx=e.touches[0].clientX);
+document.addEventListener("touchend",e=>{
+let dx=e.changedTouches[0].clientX-sx;
+if(Math.abs(dx)>50)dx<0?next():prev();
 });
 
-/* SETTINGS */
+/* keyboard */
+document.addEventListener("keydown",e=>{
+if(e.key===" "){e.preventDefault();running=!running;if(running)start=performance.now()-elapsed;}
+if(e.key==="ArrowRight")next();
+if(e.key==="ArrowLeft")prev();
+if(e.key==="r"){elapsed=0;running=false;}
+if(e.key==="p")prepRunning=!prepRunning;
+});
+
+/* nav */
+function next(){i=Math.min(wsMode?wsSpeech.length-1:speeches.length-1,i+1);reset();}
+function prev(){i=Math.max(0,i-1);reset();}
+function reset(){elapsed=0;running=false;}
+
+/* switches */
+document.getElementById("formatSwitch").onchange=e=>{
+wsMode=e.target.checked;i=0;reset();
+};
+
+document.getElementById("layoutSwitch").onchange=e=>{
+document.body.className=e.target.checked?"dark landscape":"dark portrait";
+};
+
+/* ✅ NEW MODE SWITCH */
+document.getElementById("modeSwitch").onchange=e=>{
+mode = e.target.checked ? "stopwatch" : "timer";
+};
+
+/* settings */
 const panel=document.getElementById("panel");
 const overlay=document.getElementById("overlay");
 
-settingsBtn.onclick=()=>{panel.classList.add("open");overlay.classList.add("show");};
-close.onclick=()=>{panel.classList.remove("open");overlay.classList.remove("show");};
-overlay.onclick=close.onclick;
+document.getElementById("settingsBtn").onclick=()=>{
+panel.classList.add("open");
+overlay.classList.add("show");
+};
 
-/* THEMES */
+function close(){
+panel.classList.remove("open");
+overlay.classList.remove("show");
+}
+document.getElementById("close").onclick=close;
+overlay.onclick=close;
+
+/* themes */
 document.querySelectorAll("[data-theme]").forEach(b=>{
- b.onclick=()=>{
-  document.body.className="";
-  document.body.classList.add(b.dataset.theme);
-  document.body.classList.add("portrait");
- };
-});
-
-/* INPUT */
-mainRing.onclick=toggleMain;
-prepRing.onclick=togglePrep;
-
-document.addEventListener("keydown",e=>{
- if(e.repeat) return;
- if(e.key===" "){e.preventDefault();toggleMain();}
- if(e.key==="p") togglePrep();
- if(e.key==="r") resetMain();
- if(e.key==="ArrowRight") next();
- if(e.key==="ArrowLeft") prev();
+b.onclick=()=>{
+document.body.className=b.dataset.theme;
+document.body.classList.add("portrait");
+};
 });
 
 requestAnimationFrame(tick);
+
 </script>
 
 </body>
