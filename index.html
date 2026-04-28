@@ -8,6 +8,27 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;700&display=swap" rel="stylesheet">
 
 <style>
+  @keyframes timerStartGlow {
+  0% {
+    filter: drop-shadow(0 0 0px var(--accent));
+    transform: scale(1);
+  }
+  25% {
+    filter: drop-shadow(0 0 25px var(--accent));
+    transform: scale(1.02);
+  }
+  60% {
+    filter: drop-shadow(0 0 12px var(--accent));
+  }
+  100% {
+    filter: drop-shadow(0 0 0px var(--accent));
+    transform: scale(1);
+  }
+}
+
+.glow-start {
+  animation: timerStartGlow 0.6s ease-out;
+}
 :root{
   --bg:#0b0f1a;
   --fg:#e8f0ff;
@@ -39,6 +60,22 @@ body.aesthetic{--bg:#ffe3f1;--fg:#4a1f2d;--accent:#ff4fbf;}
 body.hacker{--bg:#000;--fg:#00ff66;--accent:#00ff66;}
 body.scifi{--bg:#050816;--fg:#d6f3ff;--accent:#4df;}
 body.synthwave{--bg:#0a0014;--fg:#ffd6ff;--accent:#ff3df2;}
+body.pride{
+  --bg:#000;
+  --fg:#fff;
+  --accent:#fff;
+
+  /* horizontal rainbow flag (no smooth gradients — hard stripes) */
+  background:
+    linear-gradient(#e40303 0 16.66%,
+    #ff8c00 16.66% 33.33%,
+    #ffed00 33.33% 50%,
+    #008026 50% 66.66%,
+    #004dff 66.66% 83.33%,
+    #750787 83.33% 100%);
+}
+
+
 
 /* ===== LAYOUT ===== */
 .wrapper{
@@ -178,7 +215,7 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 <div class="panel" id="panel">
 <button class="btn" id="close">Close</button>
 
-<p>Layout</p>
+<p>Layout (📱 / 💻) </p>
 <label class="switch">
 <input type="checkbox" id="layoutSwitch">
 <span class="slider"></span>
@@ -187,6 +224,12 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 <p>Format (LD / WSD)</p>
 <label class="switch">
 <input type="checkbox" id="formatSwitch">
+<span class="slider"></span>
+</label>
+  
+ <p>Glow Animation (On / Off)</p>
+<label class="switch">
+<input type="checkbox" id="glowSwitch" checked>
 <span class="slider"></span>
 </label>
 
@@ -205,8 +248,8 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 <button class="btn" data-theme="aether">Aether</button>
 <button class="btn" data-theme="aesthetic">Aesthetic</button>
 <button class="btn" data-theme="hacker">Hacker</button>
-<button class="btn" data-theme="scifi">Sci-Fi</button>
-<button class="btn" data-theme="synthwave">Synthwave</button>
+<button class="btn" data-theme="synthwave">Neon</button>
+<button class="btn" data-theme="pride">Pride</button>
 </div>
 
 <div class="wrapper">
@@ -237,7 +280,7 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 let i=0,running=false,start=0,elapsed=0;
 let wsMode=false;
 let mode="timer"; // ✅ NEW: timer vs stopwatch
-
+let glowEnabled = true;
 let prepRunning=false,prepStart=0,prepElapsed=0;
 let prepDuration=240000;
 
@@ -290,8 +333,8 @@ main.style.strokeDashoffset = mainLen - Math.min(elapsed/dur,1)*mainLen;
 speech.textContent=list[i].n;
 time.textContent=fmt(show);
 
-/* prep */
-if(prepRunning){
+/* prep (DISABLED in WSD mode) */
+if(!wsMode && prepRunning){
 if(!prepStart) prepStart=t-prepElapsed;
 prepElapsed=t-prepStart;
 
@@ -308,7 +351,20 @@ requestAnimationFrame(tick);
 }
 
 /* ===== CONTROLS ===== */
-mainRing.onclick=()=>{running=!running;if(running)start=performance.now()-elapsed;}
+mainRing.onclick = () => {
+running = !running;
+
+if (running) {
+start = performance.now() - elapsed;
+
+/* glow only if enabled */
+if (glowEnabled) {
+mainRing.classList.remove("glow-start");
+void mainRing.offsetWidth;
+mainRing.classList.add("glow-start");
+}
+}
+};
 prepRing.onclick=()=>{prepRunning=!prepRunning;if(prepRunning)prepStart=performance.now()-prepElapsed;}
 
 /* double tap reset */
@@ -345,7 +401,11 @@ wsMode=e.target.checked;i=0;reset();
 document.getElementById("layoutSwitch").onchange=e=>{
 document.body.className=e.target.checked?"dark landscape":"dark portrait";
 };
-
+  
+document.getElementById("glowSwitch").onchange = e => {
+glowEnabled = e.target.checked;
+};
+  
 /* ✅ NEW MODE SWITCH */
 document.getElementById("modeSwitch").onchange=e=>{
 mode = e.target.checked ? "stopwatch" : "timer";
