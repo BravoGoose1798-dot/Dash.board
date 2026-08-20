@@ -58,6 +58,54 @@ body.min-light{--bg:#fafafa;--fg:#000;--accent:#000;--ring:#00000033;}
 body.aether{--bg:#0b1b2b;--fg:#fff;--accent:#ff7bf7;}
 body.aesthetic{--bg:#ffe3f1;--fg:#4a1f2d;--accent:#ff4fbf;}
 body.hacker{--bg:#000;--fg:#00ff66;--accent:#00ff66;}
+
+/* ===== HACKER THEME CRT EFFECT ===== */
+@keyframes crtFlicker{
+  0%,100%{opacity:1;}
+  92%{opacity:1;}
+  93%{opacity:.85;}
+  94%{opacity:1;}
+  96%{opacity:.92;}
+  97%{opacity:1;}
+}
+
+body.hacker::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:50;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(0,255,102,0.09) 0px,
+    rgba(0,255,102,0.09) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  mix-blend-mode:overlay;
+  animation:crtFlicker 6s infinite;
+}
+
+body.hacker::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:50;
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%);
+}
+
+body.hacker .time,
+body.hacker .prep-time,
+body.hacker .label{
+  text-shadow:0 0 6px var(--accent), 0 0 14px rgba(0,255,102,0.5);
+}
+
+body.hacker .bg-ring{stroke:#0a3d1f;}
+body.hacker .progress,
+body.hacker .prep-progress{
+  filter:drop-shadow(0 0 6px var(--accent));
+}
 body.scifi{--bg:#050816;--fg:#d6f3ff;--accent:#4df;}
 body.synthwave{--bg:#0a0014;--fg:#ffd6ff;--accent:#ff3df2;}
 body.pride{
@@ -80,7 +128,7 @@ body.pride{
 /* ===== LAYOUT ===== */
 .wrapper{
   display:flex;
-  gap:20px;
+  gap:32px;
   align-items:center;
   justify-content:center;
 }
@@ -94,8 +142,8 @@ body.landscape .wrapper{flex-direction:row;}
   cursor:pointer;
 }
 
-.ring{width:260px;height:260px;}
-.prep-ring{width:180px;height:180px;}
+.ring{width:340px;height:340px;}
+.prep-ring{width:240px;height:240px;}
 
 svg{transform:rotate(-90deg);}
 circle{fill:none;stroke-width:10;stroke-linecap:round;}
@@ -111,15 +159,17 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
   text-align:center;
 }
 
-.time{font-size:2.3rem;}
-.prep-time{font-size:1.1rem;}
+.time{font-size:3.23rem;transition:color .2s;}
+.prep-time{font-size:1.6rem;transition:color .2s;}
+
+.time.warn,.prep-time.warn{color:#ff3b3b;}
 
 .label{
   position:absolute;
-  top:30%;
+  top:28%;
   left:50%;
   transform:translateX(-50%);
-  font-size:.85rem;
+  font-size:1.15rem;
 }
 
 /* ===== SETTINGS FIXED ON TOP ===== */
@@ -229,7 +279,7 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
   
  <p>Glow Animation (Off / On)</p>
 <label class="switch">
-<input type="checkbox" id="glowSwitch" checked>
+<input type="checkbox" id="glowSwitch">
 <span class="slider"></span>
 </label>
 
@@ -280,7 +330,7 @@ circle{fill:none;stroke-width:10;stroke-linecap:round;}
 let i=0,running=false,start=0,elapsed=0;
 let wsMode=false;
 let mode="timer"; // ✅ NEW: timer vs stopwatch
-let glowEnabled = true;
+let glowEnabled = false;
 let prepRunning=false,prepStart=0,prepElapsed=0;
 let prepDuration=240000;
 
@@ -333,8 +383,17 @@ main.style.strokeDashoffset = mainLen - Math.min(elapsed/dur,1)*mainLen;
 speech.textContent=list[i].n;
 time.textContent=fmt(show);
 
-/* prep (DISABLED in WSD mode) */
-if(!wsMode && prepRunning){
+if(mode==="timer" && rem<=10000 && rem>0){
+time.classList.add("warn");
+}else{
+time.classList.remove("warn");
+}
+
+/* prep (DISABLED in WSD mode) — display now updates every frame,
+   not just while running, so a reset is reflected immediately
+   even if prepRunning is false at that moment. */
+if(!wsMode){
+if(prepRunning){
 if(!prepStart) prepStart=t-prepElapsed;
 prepElapsed=t-prepStart;
 
@@ -342,9 +401,17 @@ if(prepElapsed>=prepDuration){
 prepElapsed=prepDuration;
 prepRunning=false;
 }
+}
 
 prep.style.strokeDashoffset=prepLen-(prepElapsed/prepDuration)*prepLen;
-prepTime.textContent=fmt(prepDuration-prepElapsed);
+let prepRem=prepDuration-prepElapsed;
+prepTime.textContent=fmt(prepRem);
+
+if(prepRem<=10000 && prepRem>0){
+prepTime.classList.add("warn");
+}else{
+prepTime.classList.remove("warn");
+}
 }
 
 requestAnimationFrame(tick);
@@ -368,8 +435,8 @@ mainRing.classList.add("glow-start");
 prepRing.onclick=()=>{prepRunning=!prepRunning;if(prepRunning)prepStart=performance.now()-prepElapsed;}
 
 /* double tap reset */
-mainRing.ondblclick=()=>{elapsed=0;running=false;}
-prepRing.ondblclick=()=>{prepElapsed=0;prepRunning=false;}
+mainRing.ondblclick=()=>{elapsed=0;running=false;start=0;}
+prepRing.ondblclick=()=>{prepElapsed=0;prepRunning=false;prepStart=0;}
 
 /* swipe */
 let sx=0;
